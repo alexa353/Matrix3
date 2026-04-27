@@ -3,7 +3,8 @@ SRCS
     "adc.c"
     "i2c_bitaxe.c"
     "main.c"
-    "bm1370.c"           # NEU: Enthält bm1370_set_nonce_range
+    "../components/asic/bm1370.c"   # Pfad korrigiert
+    "../components/asic/asic.c"     # ASIC-Basis dazu
     "utils.c"            # NEU: Enthält suffixString und networkDifficulty
     "mining.c"           # NEU: Enthält extranonce2_generate
     "log_buffer.c"
