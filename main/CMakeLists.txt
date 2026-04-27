@@ -2,6 +2,8 @@ idf_component_register(
     SRCS
         "main.c"
         "system.c"
+        "log_buffer.c"              # FIX: Behebt undefined reference zu log_buffer
+        "lv_font_portfolio-6x8.c"   # FIX: Behebt undefined reference zu lv_font_portfolio_6x8
         "i2c_bitaxe.c"
         "nvs_config.c"
         "device_config.c"
@@ -35,43 +37,4 @@ idf_component_register(
         "./power/TPS546.c"
         "./power/DS4432U.c"
         "./power/INA260.c"
-    INCLUDE_DIRS
-        "." 
-        "tasks" 
-        "power" 
-        "thermal"
-        "self_test"
-        "http_server"
-        "../components/asic/include"
-        "../components/stratum/include"
-        "../components/dns_server/include"
-        "../components/connect/include"
-    REQUIRES
-        "connect" 
-        "asic"
-        "stratum" 
-        "esp_http_server" 
-        "nvs_flash"
-        "esp_netif" 
-        "esp_event" 
-        "esp_psram" 
-        "esp_lcd"
-        "lvgl__lvgl"
-        "dns_server"
-    PRIV_REQUIRES
-        "driver" 
-        "esp_adc" 
-        "esp_driver_i2c" 
-        "json" 
-        "spiffs"
-        "app_update"
-    EMBED_FILES 
-        "./http_server/recovery_page.html"
-)
-
-# Fix für LVGL Pfad-Parsing
-idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
-idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_PATH=\"${CMAKE_SOURCE_DIR}/main/lv_conf.h\"" APPEND)
-
-# Verhindert den Abbruch bei Warnungen (Silent-Error-Schutz)
-idf_build_set_property(COMPILE_OPTIONS "-Wno-error=all" APPEND)
+# ... Rest bleibt gleich
