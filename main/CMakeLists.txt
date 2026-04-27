@@ -19,6 +19,7 @@ idf_component_register(
         "./tasks/statistics_task.c"
         "./tasks/hashrate_monitor_task.c"
         "./http_server/http_server.c"
+        "./http_server/theme_api.c"
         "./http_server/websocket.c"
         "./power/power.c"
         "./power/vcore.c"
@@ -32,7 +33,7 @@ idf_component_register(
         "../components/stratum/include"
     REQUIRES
         "connect" 
-        "asic"        # Wichtig für bm1370_set_nonce_range
+        "asic"
         "stratum" 
         "esp_http_server" 
         "nvs_flash"
@@ -40,7 +41,7 @@ idf_component_register(
         "esp_event" 
         "esp_psram" 
         "esp_lcd"
-        "lvgl__lvgl"  # Erlaubt LVGL den Zugriff
+        "lvgl__lvgl"
     PRIV_REQUIRES
         "driver" 
         "esp_adc" 
@@ -52,10 +53,10 @@ idf_component_register(
         "./http_server/recovery_page.html"
 )
 
-# --- DER EINFACHE FIX ---
-# Wir setzen die LVGL-Pfade global für das gesamte Projekt
+# --- LVGL & COMPILER FIXES ---
+# WICHTIG: Die Backslashes vor den Anführungszeichen ( \" ) lösen den Includefehler!
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
-idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_PATH=${CMAKE_SOURCE_DIR}/main/lv_conf.h" APPEND)
+idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_PATH=\"${CMAKE_SOURCE_DIR}/main/lv_conf.h\"" APPEND)
 
-# Erzwinge das Bauen trotz Warnungen (verhindert Silent Errors)
+# Warnungen ignorieren, um den Build der .bin zu erzwingen
 idf_build_set_property(COMPILE_OPTIONS "-Wno-error=all" APPEND)
