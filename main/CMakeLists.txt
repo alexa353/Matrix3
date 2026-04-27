@@ -2,7 +2,6 @@ idf_component_register(
     SRCS
         "main.c"
         "system.c"
-        "utils.c"
         "../components/stratum/utils.c"
         "../components/stratum/mining.c"
         "i2c_bitaxe.c"
@@ -33,8 +32,8 @@ idf_component_register(
         "./thermal/TMP1075.c"
         "./power/power.c"
         "./power/vcore.c"
-        "./power/TPS546.c"        # FIX: Behebt TPS546_set_vout etc.
-        "./power/DS4432U.c"       # Behebt DS4432U Fehler
+        "./power/TPS546.c"
+        "./power/DS4432U.c"
         "./power/INA260.c"
     INCLUDE_DIRS
         "." 
