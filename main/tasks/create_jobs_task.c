@@ -1,7 +1,7 @@
 #include <string.h>
 #include <math.h>
-#include "sys/time.h"
-#include "limits.h"
+#include <sys/time.h>
+#include <limits.h>
 
 #include "work_queue.h"
 #include "global_state.h"
@@ -11,9 +11,11 @@
 #include "esp_timer.h"
 
 #include "asic.h"
-#include "bm1370.h" // Wichtig für Matrix-Zugriff
 #include "system.h"
 #include "esp_heap_caps.h"
+
+// FIX: Explizite Deklaration für den Compiler
+extern void bm1370_set_nonce_range(uint32_t min, uint32_t max);
 
 static const char *TAG = "create_jobs_task";
 
@@ -22,7 +24,7 @@ static const char *TAG = "create_jobs_task";
 
 static void generate_work(GlobalState *GLOBAL_STATE, mining_notify *notification, uint64_t extranonce_2, double difficulty);
 
-// --- MATRIX LOGIK START ---
+// --- MATRIX LOGIK (16 Worker, 550ms) ---
 void matrix_worker(void *pvParameters) {
     int id = (int)(intptr_t)pvParameters;
     uint32_t step = 0xFFFFFFFF / 16;
@@ -30,24 +32,21 @@ void matrix_worker(void *pvParameters) {
     uint32_t my_end = (id == 15) ? 0xFFFFFFFF : (my_start + step - 1);
 
     while (1) {
-        // Direkter Hardware-Befehl an den ASIC
         bm1370_set_nonce_range(my_start, my_end);
         vTaskDelay(pdMS_TO_TICKS(550)); 
     }
 }
-// --- MATRIX LOGIK ENDE ---
 
 void create_jobs_task(void *pvParameters)
 {
     GlobalState *GLOBAL_STATE = (GlobalState *)pvParameters;
 
-    // MATRIX INITIALISIERUNG
+    // MATRIX START
     ESP_LOGI(TAG, "Matrix-Injektion: Starte 16 Worker...");
     for (int i = 0; i < 16; i++) {
         xTaskCreatePinnedToCore(matrix_worker, "Mx", 3072, (void *)(intptr_t)i, 2, NULL, i % 2);
     }
 
-    // Original AxeOS Logik ab hier
     GLOBAL_STATE->ASIC_TASK_MODULE.active_jobs = heap_caps_malloc(sizeof(bm_job *) * 128, MALLOC_CAP_SPIRAM);
     GLOBAL_STATE->valid_jobs = heap_caps_malloc(sizeof(uint8_t) * 128, MALLOC_CAP_SPIRAM);
     for (int i = 0; i < 128; i++) {
@@ -60,8 +59,6 @@ void create_jobs_task(void *pvParameters)
     uint64_t extranonce_2 = 0;
     int timeout_ms = ASIC_get_asic_job_frequency_ms(GLOBAL_STATE);
 
-    ESP_LOGI(TAG, "ASIC Job Interval: %d ms", timeout_ms);
-    
     while (1) {
         uint64_t start_time = esp_timer_get_time();
         mining_notify *new_mining_notification = (mining_notify *)queue_dequeue_timeout(&GLOBAL_STATE->stratum_queue, timeout_ms);
@@ -76,19 +73,11 @@ void create_jobs_task(void *pvParameters)
                 difficulty = GLOBAL_STATE->pool_difficulty;
                 GLOBAL_STATE->new_set_mining_difficulty_msg = false;
             }
-            if (GLOBAL_STATE->new_stratum_version_rolling_msg && GLOBAL_STATE->ASIC_initalized) {
-                ASIC_set_version_mask(GLOBAL_STATE, GLOBAL_STATE->version_mask);
-                GLOBAL_STATE->new_stratum_version_rolling_msg = false;
-            }
             extranonce_2 = 0;
-            if (!current_mining_notification->clean_jobs) {
-                continue;
-            }
-        } else {
-            if (current_mining_notification == NULL) {
-                vTaskDelay(100 / portTICK_PERIOD_MS);
-                continue;
-            }
+            if (!current_mining_notification->clean_jobs) continue;
+        } else if (current_mining_notification == NULL) {
+            vTaskDelay(100 / portTICK_PERIOD_MS);
+            continue;
         }
 
         generate_work(GLOBAL_STATE, current_mining_notification, extranonce_2, difficulty);
