@@ -218,7 +218,7 @@ If you find that your not able to mine / have no hash rate you will need to chec
 If your Wi-Fi router has both of these options you might have to disable them both.
 
 If your still having problems here, check other settings within the Wi-Fi router and the bitaxe device, this includes the URL for
-the Stratum Host and Stratum Port.
+the Stratum Host and Stratum Port.Test.
 
 ## Attributions
 
