@@ -14,9 +14,8 @@
 #include "system.h"
 #include "esp_heap_caps.h"
 
-// WICHTIG: Die Hardware-Funktion direkt aus der asic-Komponente holen
-// Wir nutzen hier den exakten Namen, den der Linker sucht
-extern void bm1370_set_nonce_range(uint32_t min, uint32_t max) __attribute__((weak));
+// Wichtig für Hardware-Zugriff
+extern void bm1370_set_nonce_range(uint32_t min, uint32_t max);
 
 static const char *TAG = "create_jobs_task";
 
@@ -25,7 +24,7 @@ static const char *TAG = "create_jobs_task";
 
 static void generate_work(GlobalState *GLOBAL_STATE, mining_notify *notification, uint64_t extranonce_2, double difficulty);
 
-// --- MATRIX LOGIK (16 Worker, 550ms) ---
+// --- MATRIX LOGIK (Optimiert für Stabilität) ---
 void matrix_worker(void *pvParameters) {
     int id = (int)(intptr_t)pvParameters;
     uint32_t step = 0xFFFFFFFF / 16;
@@ -42,12 +41,16 @@ void create_jobs_task(void *pvParameters)
 {
     GlobalState *GLOBAL_STATE = (GlobalState *)pvParameters;
 
-    // MATRIX START
-    ESP_LOGI(TAG, "Matrix-Injektion: Starte 16 Worker...");
+    // MATRIX INITIALISIERUNG (Mit Boot-Schutz)
+    ESP_LOGI(TAG, "Matrix-Injektion: Starte 16 Worker nacheinander...");
     for (int i = 0; i < 16; i++) {
-        xTaskCreatePinnedToCore(matrix_worker, "Mx", 3072, (void *)(intptr_t)i, 2, NULL, i % 2);
+        // Stack auf 2048 reduziert (reicht völlig)
+        xTaskCreatePinnedToCore(matrix_worker, "Mx", 2048, (void *)(intptr_t)i, 2, NULL, i % 2);
+        // 150ms Pause zwischen den Starts, um Boot-Crash zu verhindern
+        vTaskDelay(pdMS_TO_TICKS(150)); 
     }
 
+    // Original AxeOS Logik
     GLOBAL_STATE->ASIC_TASK_MODULE.active_jobs = heap_caps_malloc(sizeof(bm_job *) * 128, MALLOC_CAP_SPIRAM);
     GLOBAL_STATE->valid_jobs = heap_caps_malloc(sizeof(uint8_t) * 128, MALLOC_CAP_SPIRAM);
     for (int i = 0; i < 128; i++) {
