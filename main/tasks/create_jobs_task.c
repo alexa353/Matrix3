@@ -13,8 +13,8 @@
 #include "asic.h"
 #include "system.h"
 #include "esp_heap_caps.h"
+#include "bm1370.h"
 
-// FIX: Explizite Deklaration für den Compiler
 extern void bm1370_set_nonce_range(uint32_t min, uint32_t max);
 
 static const char *TAG = "create_jobs_task";
