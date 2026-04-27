@@ -40,7 +40,7 @@ idf_component_register(
         "esp_event" 
         "esp_psram" 
         "esp_lcd"
-        "lvgl__lvgl"  # Korrekter Name der Managed Component
+        "lvgl__lvgl"  # Erlaubt LVGL den Zugriff
     PRIV_REQUIRES
         "driver" 
         "esp_adc" 
@@ -52,20 +52,10 @@ idf_component_register(
         "./http_server/recovery_page.html"
 )
 
-# --- FIX FÜR DEN LINKER (ASIC REFERENZ) ---
-idf_component_get_property(asic_lib asic COMPONENT_LIB)
-target_link_libraries(${COMPONENT_LIB} PUBLIC ${asic_lib})
-
-# --- FIX FÜR LVGL (lv_conf.h SICHTBARKEIT) ---
-# Wir zwingen LVGL, die Konfiguration aus unserem main-Ordner zu nehmen
+# --- DER EINFACHE FIX ---
+# Wir setzen die LVGL-Pfade global für das gesamte Projekt
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_PATH=${CMAKE_SOURCE_DIR}/main/lv_conf.h" APPEND)
 
-# Falls lvgl__lvgl als Bibliothek existiert, geben wir ihr die Pfade direkt
-if(TARGET idf::lvgl__lvgl)
-    target_compile_options(idf::lvgl__lvgl INTERFACE "-DLV_CONF_INCLUDE_SIMPLE=1")
-    target_compile_options(idf::lvgl__lvgl INTERFACE "-DLV_CONF_PATH=${CMAKE_SOURCE_DIR}/main/lv_conf.h")
-endif()
-
-# Allgemeine Optionen
+# Erzwinge das Bauen trotz Warnungen (verhindert Silent Errors)
 idf_build_set_property(COMPILE_OPTIONS "-Wno-error=all" APPEND)
