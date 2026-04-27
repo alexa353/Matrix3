@@ -3,7 +3,7 @@ idf_component_register(
         "main.c"
         "system.c"
         "log_buffer.c"
-        "lv_font_portfolio-6x8.c"
+        "lv_font_portfolio_6x8.c"
         "i2c_bitaxe.c"
         "nvs_config.c"
         "device_config.c"
