@@ -28,6 +28,7 @@ idf_component_register(
         "." 
         "tasks" 
         "power" 
+        "thermal"     # <--- DAS HAT GEFEHLT (Fix für thermal.h)
         "http_server"
         "../components/asic/include"
         "../components/stratum/include"
@@ -54,9 +55,8 @@ idf_component_register(
 )
 
 # --- LVGL & COMPILER FIXES ---
-# WICHTIG: Die Backslashes vor den Anführungszeichen ( \" ) lösen den Includefehler!
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_PATH=\"${CMAKE_SOURCE_DIR}/main/lv_conf.h\"" APPEND)
 
-# Warnungen ignorieren, um den Build der .bin zu erzwingen
+# Warnungen ignorieren
 idf_build_set_property(COMPILE_OPTIONS "-Wno-error=all" APPEND)
