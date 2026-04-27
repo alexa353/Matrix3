@@ -2,8 +2,6 @@ idf_component_register(
     SRCS
         "main.c"
         "system.c"
-        "../components/stratum/utils.c"
-        "../components/stratum/mining.c"
         "i2c_bitaxe.c"
         "nvs_config.c"
         "device_config.c"
@@ -12,6 +10,8 @@ idf_component_register(
         "screen.c"
         "input.c"
         "work_queue.c"
+        "../components/stratum/utils.c"
+        "../components/stratum/mining.c"
         "./power/asic_reset.c"
         "./tasks/asic_result_task.c"
         "./tasks/stratum_task.c"
@@ -69,9 +69,9 @@ idf_component_register(
         "./http_server/recovery_page.html"
 )
 
-# --- LVGL & COMPILER FIXES ---
+# Fix für LVGL Pfad-Parsing
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_INCLUDE_SIMPLE=1" APPEND)
 idf_build_set_property(COMPILE_OPTIONS "-DLV_CONF_PATH=\"${CMAKE_SOURCE_DIR}/main/lv_conf.h\"" APPEND)
 
-# Warnungen ignorieren
+# Verhindert den Abbruch bei Warnungen (Silent-Error-Schutz)
 idf_build_set_property(COMPILE_OPTIONS "-Wno-error=all" APPEND)
