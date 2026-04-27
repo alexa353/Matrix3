@@ -2,6 +2,7 @@ idf_component_register(
     SRCS
         "main.c"
         "system.c"
+        "utils.c"
         "../components/stratum/utils.c"
         "../components/stratum/mining.c"
         "i2c_bitaxe.c"
@@ -25,8 +26,15 @@ idf_component_register(
         "./http_server/websocket.c"
         "./self_test/self_test.c"
         "./thermal/thermal.c"
+        "./thermal/PID.c"
+        "./thermal/EMC2101.c"
+        "./thermal/EMC2103.c"
+        "./thermal/EMC2302.c"
+        "./thermal/TMP1075.c"
         "./power/power.c"
         "./power/vcore.c"
+        "./power/TPS546.c"        # FIX: Behebt TPS546_set_vout etc.
+        "./power/DS4432U.c"       # Behebt DS4432U Fehler
         "./power/INA260.c"
     INCLUDE_DIRS
         "." 
@@ -37,8 +45,8 @@ idf_component_register(
         "http_server"
         "../components/asic/include"
         "../components/stratum/include"
-        "../components/dns_server/include" # Fix für dns_server.h
-        "../components/connect/include"    # Sicherhaltshalber für WiFi
+        "../components/dns_server/include"
+        "../components/connect/include"
     REQUIRES
         "connect" 
         "asic"
@@ -50,7 +58,7 @@ idf_component_register(
         "esp_psram" 
         "esp_lcd"
         "lvgl__lvgl"
-        "dns_server" # Muss hier stehen, damit die Lib gelinkt wird
+        "dns_server"
     PRIV_REQUIRES
         "driver" 
         "esp_adc" 
