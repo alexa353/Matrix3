@@ -2,8 +2,8 @@ idf_component_register(
     SRCS
         "main.c"
         "system.c"
-        "../components/stratum/utils.c"   # Pfad korrigiert
-        "../components/stratum/mining.c"  # Pfad korrigiert
+        "../components/stratum/utils.c"
+        "../components/stratum/mining.c"
         "i2c_bitaxe.c"
         "nvs_config.c"
         "device_config.c"
@@ -37,6 +37,8 @@ idf_component_register(
         "http_server"
         "../components/asic/include"
         "../components/stratum/include"
+        "../components/dns_server/include" # Fix für dns_server.h
+        "../components/connect/include"    # Sicherhaltshalber für WiFi
     REQUIRES
         "connect" 
         "asic"
@@ -48,6 +50,7 @@ idf_component_register(
         "esp_psram" 
         "esp_lcd"
         "lvgl__lvgl"
+        "dns_server" # Muss hier stehen, damit die Lib gelinkt wird
     PRIV_REQUIRES
         "driver" 
         "esp_adc" 
