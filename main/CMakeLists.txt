@@ -10,6 +10,7 @@ idf_component_register(
         "screen.c"
         "input.c"
         "work_queue.c"
+        "utils.c"
         "./power/asic_reset.c"
         "./tasks/asic_result_task.c"
         "./tasks/stratum_task.c"
@@ -21,6 +22,8 @@ idf_component_register(
         "./http_server/http_server.c"
         "./http_server/theme_api.c"
         "./http_server/websocket.c"
+        "./self_test/self_test.c"
+        "./thermal/thermal.c"
         "./power/power.c"
         "./power/vcore.c"
         "./power/INA260.c"
@@ -28,7 +31,8 @@ idf_component_register(
         "." 
         "tasks" 
         "power" 
-        "thermal"     # <--- DAS HAT GEFEHLT (Fix für thermal.h)
+        "thermal"
+        "self_test"    # Fix für self_test.h
         "http_server"
         "../components/asic/include"
         "../components/stratum/include"
