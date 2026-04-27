@@ -5,8 +5,8 @@ SRCS
     "main.c"
     "../components/asic/bm1370.c"   # Pfad korrigiert
     "../components/asic/asic.c"     # ASIC-Basis dazu
-    "utils.c"            # NEU: Enthält suffixString und networkDifficulty
-    "mining.c"           # NEU: Enthält extranonce2_generate
+    "../components/stratum/utils.c"
+    "../components/stratum/mining.c"
     "log_buffer.c"
     "nvs_config.c"
     "display.c"
