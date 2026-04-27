@@ -13,9 +13,10 @@
 #include "asic.h"
 #include "system.h"
 #include "esp_heap_caps.h"
-#include "bm1370.h"
 
-extern void bm1370_set_nonce_range(uint32_t min, uint32_t max);
+// WICHTIG: Die Hardware-Funktion direkt aus der asic-Komponente holen
+// Wir nutzen hier den exakten Namen, den der Linker sucht
+extern void bm1370_set_nonce_range(uint32_t min, uint32_t max) __attribute__((weak));
 
 static const char *TAG = "create_jobs_task";
 
