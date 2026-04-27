@@ -2,6 +2,8 @@ idf_component_register(
     SRCS
         "main.c"
         "system.c"
+        "../components/stratum/utils.c"   # Pfad korrigiert
+        "../components/stratum/mining.c"  # Pfad korrigiert
         "i2c_bitaxe.c"
         "nvs_config.c"
         "device_config.c"
@@ -10,7 +12,6 @@ idf_component_register(
         "screen.c"
         "input.c"
         "work_queue.c"
-        "utils.c"
         "./power/asic_reset.c"
         "./tasks/asic_result_task.c"
         "./tasks/stratum_task.c"
@@ -32,7 +33,7 @@ idf_component_register(
         "tasks" 
         "power" 
         "thermal"
-        "self_test"    # Fix für self_test.h
+        "self_test"
         "http_server"
         "../components/asic/include"
         "../components/stratum/include"
